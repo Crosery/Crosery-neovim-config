@@ -1,0 +1,16 @@
+[
+  {
+    "name": "gcc (GCC) 15.2.1 20251112 (Global)",
+    "compilers": {
+      "C": "/usr/bin/gcc",
+      "CXX": "/usr/bin/g++"
+    }
+  },
+  {
+    "name": "clang version 21.1.6 (Global)",
+    "compilers": {
+      "C": "/usr/bin/clang",
+      "CXX": "/usr/bin/clang++"
+    }
+  }
+]
