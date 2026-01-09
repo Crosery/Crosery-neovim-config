@@ -2,6 +2,10 @@
 
 这是我的 `~/.config/nvim` 配置仓库：以 **LazyVim** 作为基础发行版，用 **lazy.nvim** 进行插件管理，并在 `lua/config/` 与 `lua/plugins/` 里做了大量个性化配置（主题、状态栏、FZF、DAP、CopilotChat、CMake、终端等）。
 
+## 预览
+
+![Neovim 配置展示](display.png)
+
 ## 目录
 
 - [环境与依赖](#环境与依赖)
