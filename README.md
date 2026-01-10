@@ -34,16 +34,28 @@
 
 ## 环境与依赖
 
-- Neovim：建议 `>= 0.11`（当前环境为 `NVIM v0.11.5`）
-- Git：用于首次拉取 `lazy.nvim` 与插件更新
-- `rg`（ripgrep）：用于更快的 `:grep`/搜索（`opt.grepprg = "rg --vimgrep"`）
-- `fzf`：`fzf-lua` 通常需要系统已安装 `fzf` 可执行文件
-- C/C++/CMake 相关（可选）：`cmake`、编译器（gcc/clang）、以及你常用的构建工具（Ninja/Make）
-- DAP 相关（可选）：通过 `:Mason` 安装调试适配器（例如 C/C++ 常用 `codelldb`）
-- 图片渲染（可选）：
+- 必需：
+  - Neovim：建议 `>= 0.11`（当前环境为 `NVIM v0.11.5`）
+  - Git：用于首次拉取 `lazy.nvim` 与插件更新
+- 强烈建议：
+  - `rg`（ripgrep）：用于更快的 `:grep`/搜索（`opt.grepprg = "rg --vimgrep"`）
+  - `fzf`：`fzf-lua` 通常需要系统已安装 `fzf` 可执行文件
+  - `fd`：供搜索/文件查找类插件使用（如 `Snacks.picker`/`fzf-lua`）
+- 语言与 LSP 相关（按需安装）：
+  - C/C++/CMake：`cmake`、`clangd` 或 `gcc/clang`、以及构建工具（Ninja/Make）
+  - Python：`python3` + `pynvim`
+  - Node.js：`node` + `npm` + `neovim` npm 包（`npm i -g neovim`）
+  - Rust：`rust-analyzer`（推荐配合 `rustup`）
+- 调试（可选）：
+  - DAP 相关：通过 `:Mason` 安装调试适配器（例如 C/C++ 常用 `codelldb`）
+- 图片/文档渲染（可选）：
   - `3rd/image.nvim`：配置为 `backend = "kitty"`，建议在 Kitty 终端使用
   - `leafo/magick`：需要 `luarocks` + ImageMagick（用于 `processor = "magick_rock"`）
-- Neovide（可选）：如果你用 Neovide，会启用 `lua/config/options.lua` 内的 Neovide 专用配置（字体、背景图、透明度等）
+  - Mermaid：`@mermaid-js/mermaid-cli`（`mmdc`）
+  - LaTeX：`tectonic` 或 `texlive`
+- 其他（可选）：
+  - `lazygit`：若使用相关快捷键/集成
+  - Neovide：如果你用 Neovide，会启用 `lua/config/options.lua` 内的 Neovide 专用配置（字体、背景图、透明度等）
 
 ## 安装与启动
 
