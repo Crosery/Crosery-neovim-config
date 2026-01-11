@@ -55,15 +55,32 @@ return {
       },
     },
 
-    keys = {
-      { "<leader>m", "", desc = "+CMake" },
-      { "<leader>ms", "<cmd>CMakeSelectKit<cr>", desc = "选择 Kit" },
-      { "<leader>mg", "<cmd>CMakeGenerate<cr>", desc = "生成项目" },
-      { "<leader>mb", "<cmd>CMakeBuild<cr>", desc = "构建目标" },
-      { "<leader>mr", "<cmd>CMakeRun<cr>", desc = "运行目标" },
-      { "<leader>md", "<cmd>CMakeDebug<cr>", desc = "调试目标" },
-      { "<leader>mt", "<cmd>CMakeSelectLaunchTarget<cr>", desc = "选择启动目标" },
-      { "<leader>mc", "<cmd>CMakeClean<cr>", desc = "清理构建" },
-    },
+    config = function(_, opts)
+      local function check_cmake()
+        if vim.fn.filereadable(vim.uv.cwd() .. "/CMakeLists.txt") ~= 1 then
+          vim.notify("当前目录没有 CMakeLists.txt 文件", vim.log.levels.WARN)
+          return false
+        end
+        return true
+      end
+
+      local function map(key, cmd, desc)
+        vim.keymap.set("n", key, function()
+          if check_cmake() then
+            vim.cmd(cmd)
+          end
+        end, { desc = desc })
+      end
+
+      map("<leader>ms", "CMakeSelectKit", "选择 Kit")
+      map("<leader>mg", "CMakeGenerate", "生成项目")
+      map("<leader>mb", "CMakeBuild", "构建目标")
+      map("<leader>mr", "CMakeRun", "运行目标")
+      map("<leader>md", "CMakeDebug", "调试目标")
+      map("<leader>mt", "CMakeSelectLaunchTarget", "选择启动目标")
+      map("<leader>mc", "CMakeClean", "清理构建")
+
+      require("cmake-tools").setup(opts)
+    end,
   },
 }

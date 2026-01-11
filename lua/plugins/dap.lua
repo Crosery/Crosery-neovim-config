@@ -495,21 +495,33 @@ return {
 
       -- 钩子 1: 在调试会话成功初始化后触发
       dap.listeners.after.event_initialized["dapui_config"] = function()
-        -- 步骤 a: 自动打开 dap-ui 界面
+        -- 核心逻辑：强制关闭所有侧边栏
+        local function force_close_sidebars()
+          -- 关闭 Snacks Explorer / Picker (LazyVim 新版默认)
+          if _G.Snacks then
+            pcall(function()
+              for _, p in ipairs(_G.Snacks.picker.get()) do
+                p:close()
+              end
+            end)
+          end
+          -- 关闭 Neo-tree (兼容旧配置)
+          if package.loaded["neo-tree"] then
+            pcall(function() vim.cmd("Neotree close") end)
+          end
+        end
+
+        -- 第一波关闭：立刻执行
+        force_close_sidebars()
+        
+        -- 打开调试界面
         dapui.open()
 
-        -- 步骤 b: 尝试关闭可能存在的文件树插件 (Neo-tree / Nvim-tree)
-        -- 给一点延时，确保 UI 渲染顺
-        vim.defer_fn(function()
-          -- 尝试关闭 Neo-tree
-          if package.loaded["neo-tree"] then
-            vim.cmd("Neotree close")
-          end
-          -- 尝试关闭 Nvim-tree (如果安装了的话)
-          if package.loaded["nvim-tree"] then
-            vim.cmd("NvimTreeClose")
-          end
-        end, 50)
+        -- 第二波关闭：延迟执行（针对 UI 渲染滞后的情况）
+        -- 增加多个时间点的检查，确保万无一失
+        vim.defer_fn(force_close_sidebars, 50)
+        vim.defer_fn(force_close_sidebars, 200)
+        vim.defer_fn(force_close_sidebars, 500)
       end
 
       -- 钩子 2: 在调试会话终止或退出前触发
