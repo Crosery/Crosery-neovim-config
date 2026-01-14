@@ -345,6 +345,10 @@
 | n | `<C-l>u` | `:LspUpdate<cr>` | 更新 LSP |
 | n | `<leader>ad` | `:Copilot disable<cr>` | 关闭 AI 补全 |
 | n | `<leader>ae` | `:Copilot enable<cr>` | 开启 AI 补全 |
+| i | `<C-a>` | `<Left>` | 插入模式向左移动 |
+| i | `<C-d>` | `<Right>` | 插入模式向右移动 |
+| i | `<C-w>` | `<Up>` | 插入模式向上移动 |
+| i | `<C-s>` | `<Down>` | 插入模式向下移动 |
 
 ### 终端（内置终端 + ToggleTerm）
 

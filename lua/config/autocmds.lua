@@ -168,3 +168,60 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
   end,
 })
+
+-- 10. 顶部栏透明化（Tabline/Winbar/Bufferline）
+vim.api.nvim_create_autocmd({ "ColorScheme", "VimEnter" }, {
+  group = augroup("顶部栏透明"),
+  callback = function()
+    local groups = {
+      "TabLine",
+      "TabLineFill",
+      "TabLineSel",
+      "WinBar",
+      "WinBarNC",
+      "BufferLineFill",
+      "BufferLineBackground",
+      "BufferLineBufferVisible",
+      "BufferLineBufferSelected",
+      "BufferLineTab",
+      "BufferLineTabSelected",
+      "BufferLineTabClose",
+      "BufferLineCloseButton",
+      "BufferLineCloseButtonVisible",
+      "BufferLineCloseButtonSelected",
+      "BufferLineSeparator",
+      "BufferLineSeparatorVisible",
+      "BufferLineSeparatorSelected",
+      "BufferLineDuplicate",
+      "BufferLineDuplicateVisible",
+      "BufferLineDuplicateSelected",
+      "BufferLineModified",
+      "BufferLineModifiedVisible",
+      "BufferLineModifiedSelected",
+      "BufferLineIndicator",
+      "BufferLineIndicatorSelected",
+      "BufferLineIndicatorVisible",
+      "BufferLinePick",
+      "BufferLinePickVisible",
+      "BufferLinePickSelected",
+      "BufferLineOffset",
+      "BufferLineOffsetSeparator",
+      "SnacksExplorerNormal",
+      "SnacksExplorerNormalNC",
+      "SnacksExplorerTitle",
+      "SnacksExplorerBorder",
+      "SnacksExplorerWinSeparator",
+      "Normal",
+      "NormalNC",
+      "SignColumn",
+      "EndOfBuffer",
+    }
+    for _, group in ipairs(groups) do
+      vim.cmd(("highlight %s guibg=NONE ctermbg=NONE"):format(group))
+    end
+
+    -- 给分割线一点颜色，同时保持透明背景
+    vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#d79921", bg = "NONE" })
+    vim.api.nvim_set_hl(0, "VertSplit", { fg = "#d79921", bg = "NONE" })
+  end,
+})
