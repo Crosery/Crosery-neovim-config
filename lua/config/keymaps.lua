@@ -32,7 +32,7 @@ map("n", "<leader>ad", "<cmd>Copilot disable<cr>", { desc = "关闭AI补全 (AI 
 map("n", "<leader>ae", "<cmd>Copilot enable<cr>", { desc = "开启AI补全 (AI Copilot Enable)" })
 
 -- insert mode下移动光标
-map("i", "<C-a>", "<Left>", { desc = "向左移动" })
-map("i", "<C-d>", "<Right>", { desc = "向右移动" })
-map("i", "<C-w>", "<Up>", { desc = "向上移动" })
-map("i", "<C-s>", "<Down>", { desc = "向下移动" })
+map("i", "<C-h>", "<Left>", { desc = "向左移动" })
+map("i", "<C-l>", "<Right>", { desc = "向右移动" })
+map("i", "<C-k>", "<Up>", { desc = "向上移动" })
+map("i", "<C-j>", "<Down>", { desc = "向下移动" })

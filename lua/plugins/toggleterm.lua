@@ -83,19 +83,25 @@ return {
     -- 1. OpenCode (<leader>oq)
     -------------------------------------------------------------------------
     local toggle_opencode = create_tool_terminal("OpenCode", "opencode", "Toggle OpenCode")
-    vim.keymap.set("n", "<leader>oq", toggle_opencode, { noremap = true, silent = true, desc = "Toggle OpenCode" })
+    vim.keymap.set("n", "<leader>o1", toggle_opencode, { noremap = true, silent = true, desc = "Toggle OpenCode" })
 
     -------------------------------------------------------------------------
     -- 2. Codex (<leader>ow)
     -------------------------------------------------------------------------
     local toggle_codex = create_tool_terminal("Codex", "codex", "Toggle Codex")
-    vim.keymap.set("n", "<leader>ow", toggle_codex, { noremap = true, silent = true, desc = "Toggle Codex" })
+    vim.keymap.set("n", "<leader>o2", toggle_codex, { noremap = true, silent = true, desc = "Toggle Codex" })
 
     -------------------------------------------------------------------------
     -- 3. Claudecode (<leader>oe)
     -------------------------------------------------------------------------
-    local toggle_opencode = create_tool_terminal("ClaudeCode", "claude", "Toggle Claudecode")
-    vim.keymap.set("n", "<leader>oe", toggle_opencode, { noremap = true, silent = true, desc = "Toggle Claudecode" })
+    local toggle_claudecode = create_tool_terminal("ClaudeCode", "claude", "Toggle Claudecode")
+    vim.keymap.set("n", "<leader>o3", toggle_claudecode, { noremap = true, silent = true, desc = "Toggle Claudecode" })
+
+    -------------------------------------------------------------------------
+    -- 4. gemini (<leader>or)
+    -------------------------------------------------------------------------
+    local toggle_gemini = create_tool_terminal("Gemini", "gemini", "Toggle Gemini-Cli")
+    vim.keymap.set("n", "<leader>o4", toggle_gemini, { noremap = true, silent = true, desc = "Toggle Gemini-Cli" })
   end,
   opts = {},
 }

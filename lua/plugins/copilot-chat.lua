@@ -2,6 +2,13 @@ return {
   -- 覆盖 Copilot 核心插件配置
   {
     "zbirenbaum/copilot.lua",
+    opts = {
+      suggestion = {
+        enabled = false,
+        auto_trigger = false,
+      },
+      panel = { enabled = false },
+    },
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",

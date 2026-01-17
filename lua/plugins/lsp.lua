@@ -82,7 +82,6 @@ return {
             { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
             { "K", function() return vim.lsp.buf.hover() end, desc = "Hover" },
             { "gK", function() return vim.lsp.buf.signature_help() end, desc = "Signature Help", has = "signatureHelp" },
-            { "<c-k>", function() return vim.lsp.buf.signature_help() end, mode = "i", desc = "Signature Help", has = "signatureHelp" },
             { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
             { "<leader>cc", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
             { "<leader>cC", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
@@ -147,18 +146,8 @@ return {
         -- Markdown 默认不启用 marksman（避免 Markdown 诊断/提示干扰）
         marksman = { enabled = false },
       },
-      -- you can do any additional lsp server setup here
-      -- return true if you don't want this server to be setup with lspconfig
       ---@type table<string, fun(server:string, opts: vim.lsp.Config):boolean?>
-      setup = {
-        -- example to setup with typescript.nvim
-        -- tsserver = function(_, opts)
-        --   require("typescript").setup({ server = opts })
-        --   return true
-        -- end,
-        -- Specify * to use this function as a fallback for any server
-        -- ["*"] = function(server, opts) end,
-      },
+      setup = {},
     }
     return ret
   end,

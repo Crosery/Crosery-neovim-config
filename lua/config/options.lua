@@ -12,9 +12,6 @@ end
 -- neovim配置
 vim.lsp.set_log_level("off")
 
--- 根目录识别
-vim.g.root_spec = { "cwd" }
-
 -- 自动保存
 vim.g.auto_save = 1
 vim.g.auto_save_interval = 1
@@ -50,7 +47,7 @@ vim.g.lazyvim_picker = "fzf"
 vim.g.lazyvim_cmp = "auto"
 
 -- 如果当前的补全引擎支持 AI 补全源（例如 Copilot），
--- 则优先使用 AI 补全的弹出菜单，而不是行内灰色提示文本。
+-- 设置为 true 会把 AI 放进补全菜单；设置为 false 则关闭 AI 补全菜单源。
 vim.g.ai_cmp = true
 
 -- LazyVim 的项目根目录检测规则。
@@ -59,10 +56,6 @@ vim.g.ai_cmp = true
 -- 2. { ".git", "lua" }: 向上查找是否存在 `.git` 目录或 `lua` 目录。
 -- 3. "cwd": 如果以上都失败，则使用当前工作目录 (current working directory) 作为根目录。
 vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
-
--- （此行为注释掉的示例代码）可以用于指定 Neovim 内置终端使用的 shell。
--- 例如 `LazyVim.terminal.setup("pwsh")` 会将 shell 设置为 PowerShell Core 并进行额外配置。
--- LazyVim.terminal.setup("pwsh")
 
 -- 在使用 "lsp" 规则检测项目根目录时，需要忽略的 LSP 服务器列表。
 -- 这很有用，因为像 "copilot" 这样的全局 LSP 服务器不应该被用来决定项目根目录。
