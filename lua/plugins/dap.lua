@@ -73,6 +73,209 @@ local function get_args(config)
   return config
 end
 
+local function collect_repl_output(session, expression, callback)
+  local dap = require("dap")
+  local chunks = {}
+  local key = "disasm_view"
+  local orig_handler = dap.listeners.after.event_output[key]
+
+  dap.listeners.after.event_output[key] = function(_, body)
+    if body and body.output then
+      table.insert(chunks, body.output)
+    end
+  end
+
+  session:request("evaluate", { expression = expression, context = "repl" }, function(err, resp)
+    if resp and resp.result and resp.result ~= "" then
+      table.insert(chunks, resp.result)
+    end
+
+    vim.defer_fn(function()
+      dap.listeners.after.event_output[key] = orig_handler
+      callback(err, table.concat(chunks))
+    end, 120)
+  end)
+end
+
+local function normalize_lldb_output(output)
+  local lines = vim.split(output or "", "\n", { plain = true })
+  local cleaned = {}
+  for _, line in ipairs(lines) do
+    line = line:gsub("\r", "")
+    if line:match("^%s*%(lldb%)") then
+      line = line:gsub("^%s*%(lldb%)%s*", "")
+    end
+    table.insert(cleaned, line)
+  end
+
+  while #cleaned > 0 and cleaned[1] == "" do
+    table.remove(cleaned, 1)
+  end
+  while #cleaned > 0 and cleaned[#cleaned] == "" do
+    table.remove(cleaned)
+  end
+
+  return cleaned
+end
+
+local function show_disassemble_dap(session)
+  local frame = session.current_frame
+  if not frame then
+    vim.notify("没有可用的栈帧信息", vim.log.levels.WARN)
+    return
+  end
+
+  session:request("disassemble", {
+    memoryReference = frame.instructionPointerReference or tostring(frame.instructionPointerReference),
+    instructionOffset = -50,
+    instructionCount = 100,
+  }, function(err, response)
+    if err then
+      vim.notify("获取汇编失败: " .. vim.inspect(err), vim.log.levels.ERROR)
+      return
+    end
+
+    vim.schedule(function()
+      setup_debug_highlights()
+
+      local buf = vim.api.nvim_create_buf(false, true)
+      vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+
+      local lines = {
+        "  反汇编视图",
+        "",
+        "       │ 地址               │ 指令",
+        "  ─────┼────────────────────┼" .. string.rep("─", 60),
+      }
+      local current_line = nil
+      local current_addr = frame.instructionPointerReference or ""
+
+      if response and response.instructions then
+        for _, inst in ipairs(response.instructions) do
+          local addr = inst.address or ""
+          local instr = inst.instruction or ""
+          local symbol = inst.symbol and ("  ; " .. inst.symbol) or ""
+          local marker = (addr == current_addr) and " >>> " or "     "
+          if addr == current_addr then
+            current_line = #lines + 1
+          end
+
+          local full_instr = instr .. symbol
+          if #full_instr > 55 then
+            full_instr = full_instr:sub(1, 52) .. "..."
+          end
+
+          table.insert(lines, string.format("  %s│ %-18s │ %s", marker, addr, full_instr))
+        end
+      else
+        table.insert(lines, "       │                    │ 无法获取汇编指令")
+      end
+      table.insert(lines, "")
+
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+      vim.api.nvim_buf_set_option(buf, "modifiable", false)
+
+      -- 高亮
+      local ns = vim.api.nvim_create_namespace("dap_disasm")
+      vim.api.nvim_buf_add_highlight(buf, ns, "DbgTitle", 0, 0, -1)
+      vim.api.nvim_buf_add_highlight(buf, ns, "DbgHeader", 2, 0, -1)
+      vim.api.nvim_buf_add_highlight(buf, ns, "DbgSep", 3, 0, -1)
+
+      for i = 4, #lines - 2 do
+        local line = lines[i + 1]
+        if line then
+          if line:match(">>>") then
+            vim.api.nvim_buf_add_highlight(buf, ns, "DbgCurrent", i, 2, 7)
+            vim.api.nvim_buf_add_highlight(buf, ns, "DbgCurrentLine", i, 0, -1)
+          end
+          vim.api.nvim_buf_add_highlight(buf, ns, "DbgSep", i, 7, 8)
+          vim.api.nvim_buf_add_highlight(buf, ns, "DbgSep", i, 27, 28)
+          vim.api.nvim_buf_add_highlight(buf, ns, "DbgAddr", i, 9, 27)
+          local sym_pos = line:find(";")
+          if sym_pos then
+            vim.api.nvim_buf_add_highlight(buf, ns, "DbgSymbol", i, sym_pos - 1, -1)
+          end
+        end
+      end
+
+      local win = create_float_win(buf, { width = 100, height = 35, title = "  反汇编 " })
+      if current_line then
+        vim.api.nvim_win_set_cursor(win, { current_line, 0 })
+        vim.cmd("normal! zz")
+      end
+    end)
+  end)
+end
+
+local function show_disassemble_lldb(session)
+  local frame = session.current_frame
+  if not frame then
+    vim.notify("没有可用的栈帧信息", vim.log.levels.WARN)
+    return
+  end
+
+  collect_repl_output(session, "di -m -F intel", function(err, output)
+    if err then
+      vim.notify("获取混合反汇编失败: " .. vim.inspect(err), vim.log.levels.ERROR)
+      show_disassemble_dap(session)
+      return
+    end
+
+    local lines = normalize_lldb_output(output)
+    if #lines == 0 then
+      vim.notify("di -m 没有输出，改用 DAP disassemble", vim.log.levels.WARN)
+      show_disassemble_dap(session)
+      return
+    end
+
+    vim.schedule(function()
+      setup_debug_highlights()
+
+      local buf = vim.api.nvim_create_buf(false, true)
+      vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+
+      local display = { "  反汇编视图 (di -m)", "" }
+      vim.list_extend(display, lines)
+
+      vim.api.nvim_buf_set_lines(buf, 0, -1, false, display)
+      vim.api.nvim_buf_set_option(buf, "modifiable", false)
+
+      local ns = vim.api.nvim_create_namespace("dap_disasm_mixed")
+      vim.api.nvim_buf_add_highlight(buf, ns, "DbgTitle", 0, 0, -1)
+
+      local current_line = nil
+      for i = 3, #display do
+        local line = display[i]
+        local row = i - 1
+
+        local marker_start, marker_end = line:find("->")
+        if marker_start and line:match("^%s*->") then
+          current_line = i
+          vim.api.nvim_buf_add_highlight(buf, ns, "DbgCurrent", row, marker_start - 1, marker_end)
+          vim.api.nvim_buf_add_highlight(buf, ns, "DbgCurrentLine", row, 0, -1)
+        end
+
+        local addr_start, addr_end = line:find("0x%x+")
+        if addr_start then
+          vim.api.nvim_buf_add_highlight(buf, ns, "DbgAddr", row, addr_start - 1, addr_end)
+        end
+
+        if line:match("^%s*frame%s+#") then
+          vim.api.nvim_buf_add_highlight(buf, ns, "DbgHeader", row, 0, -1)
+        elseif line:match("^%s*%d+%s+") or line:match("^%s*[%w%._%-%/]+:%d+") then
+          vim.api.nvim_buf_add_highlight(buf, ns, "DbgSymbol", row, 0, -1)
+        end
+      end
+
+      local win = create_float_win(buf, { width = 100, height = 35, title = "  反汇编 " })
+      if current_line then
+        vim.api.nvim_win_set_cursor(win, { current_line, 0 })
+        vim.cmd("normal! zz")
+      end
+    end)
+  end)
+end
+
 return {
   -- ====================================================================
   -- 1. nvim-dap: 调试核心
@@ -257,94 +460,12 @@ return {
             vim.notify("没有活动的调试会话", vim.log.levels.WARN)
             return
           end
-
-          local frame = session.current_frame
-          if not frame then
-            vim.notify("没有可用的栈帧信息", vim.log.levels.WARN)
-            return
+          local adapter_type = session.config and session.config.type or ""
+          if adapter_type == "codelldb" or adapter_type == "lldb" then
+            show_disassemble_lldb(session)
+          else
+            show_disassemble_dap(session)
           end
-
-          session:request("disassemble", {
-            memoryReference = frame.instructionPointerReference or tostring(frame.instructionPointerReference),
-            instructionOffset = -50,
-            instructionCount = 100,
-          }, function(err, response)
-            if err then
-              vim.notify("获取汇编失败: " .. vim.inspect(err), vim.log.levels.ERROR)
-              return
-            end
-
-            vim.schedule(function()
-              setup_debug_highlights()
-
-              local buf = vim.api.nvim_create_buf(false, true)
-              vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
-
-              local lines = {
-                "  反汇编视图",
-                "",
-                "       │ 地址               │ 指令",
-                "  ─────┼────────────────────┼"
-                  .. string.rep("─", 60),
-              }
-              local current_line = nil
-              local current_addr = frame.instructionPointerReference or ""
-
-              if response and response.instructions then
-                for _, inst in ipairs(response.instructions) do
-                  local addr = inst.address or ""
-                  local instr = inst.instruction or ""
-                  local symbol = inst.symbol and ("  ; " .. inst.symbol) or ""
-                  local marker = (addr == current_addr) and " >>> " or "     "
-                  if addr == current_addr then
-                    current_line = #lines + 1
-                  end
-
-                  local full_instr = instr .. symbol
-                  if #full_instr > 55 then
-                    full_instr = full_instr:sub(1, 52) .. "..."
-                  end
-
-                  table.insert(lines, string.format("  %s│ %-18s │ %s", marker, addr, full_instr))
-                end
-              else
-                table.insert(lines, "       │                    │ 无法获取汇编指令")
-              end
-              table.insert(lines, "")
-
-              vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-              vim.api.nvim_buf_set_option(buf, "modifiable", false)
-
-              -- 高亮
-              local ns = vim.api.nvim_create_namespace("dap_disasm")
-              vim.api.nvim_buf_add_highlight(buf, ns, "DbgTitle", 0, 0, -1)
-              vim.api.nvim_buf_add_highlight(buf, ns, "DbgHeader", 2, 0, -1)
-              vim.api.nvim_buf_add_highlight(buf, ns, "DbgSep", 3, 0, -1)
-
-              for i = 4, #lines - 2 do
-                local line = lines[i + 1]
-                if line then
-                  if line:match(">>>") then
-                    vim.api.nvim_buf_add_highlight(buf, ns, "DbgCurrent", i, 2, 7)
-                    vim.api.nvim_buf_add_highlight(buf, ns, "DbgCurrentLine", i, 0, -1)
-                  end
-                  vim.api.nvim_buf_add_highlight(buf, ns, "DbgSep", i, 7, 8)
-                  vim.api.nvim_buf_add_highlight(buf, ns, "DbgSep", i, 27, 28)
-                  vim.api.nvim_buf_add_highlight(buf, ns, "DbgAddr", i, 9, 27)
-                  local sym_pos = line:find(";")
-                  if sym_pos then
-                    vim.api.nvim_buf_add_highlight(buf, ns, "DbgSymbol", i, sym_pos - 1, -1)
-                  end
-                end
-              end
-
-              local win = create_float_win(buf, { width = 100, height = 35, title = "  反汇编 " })
-              if current_line then
-                vim.api.nvim_win_set_cursor(win, { current_line, 0 })
-                vim.cmd("normal! zz")
-              end
-            end)
-          end)
         end,
         desc = "查看汇编",
       },

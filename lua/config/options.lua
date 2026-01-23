@@ -46,6 +46,7 @@ vim.g.lazyvim_picker = "fzf"
 -- 设置为 "auto" 会自动使用通过 `:LazyExtras` 启用的那个补全引擎。
 vim.g.lazyvim_cmp = "auto"
 
+
 -- 如果当前的补全引擎支持 AI 补全源（例如 Copilot），
 -- 设置为 true 会把 AI 放进补全菜单；设置为 false 则关闭 AI 补全菜单源。
 vim.g.ai_cmp = true

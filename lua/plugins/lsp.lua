@@ -130,20 +130,7 @@ return {
             },
           },
         },
-        -- pythonlsp设置
-        basedpyright = {
-          settings = {
-            basedpyright = {
-              analysis = {
-                -- 类型检查
-                typeCheckingMode = "basic",
-                autoImportCompletions = true,
-                diagnosticMode = "workspace",
-              },
-            },
-          },
-        },
-        -- Markdown 默认不启用 marksman（避免 Markdown 诊断/提示干扰）
+
         marksman = { enabled = false },
       },
       ---@type table<string, fun(server:string, opts: vim.lsp.Config):boolean?>

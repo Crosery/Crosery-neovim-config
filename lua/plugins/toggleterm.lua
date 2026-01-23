@@ -45,8 +45,8 @@ return {
 
             -- 绑定按键：按 Esc 发送给终端程序
             vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Esc>", { noremap = true, silent = true })
-            -- 绑定按键：按 Ctrl+q 直接关闭窗口
-            vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<C-q>", "<cmd>close<CR>", { noremap = true, silent = true })
+            -- 绑定按键：按 alt+q 直接关闭窗口
+            vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<A-q>", "<cmd>close<CR>", { noremap = true, silent = true })
           end,
         })
       end
