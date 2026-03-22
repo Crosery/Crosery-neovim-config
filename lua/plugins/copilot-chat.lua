@@ -84,6 +84,104 @@ return {
         desc = "Prompt Actions (CopilotChat)",
         mode = { "n", "x" },
       },
+      {
+        "<leader>af",
+        function()
+          vim.ui.input({ prompt = "Ask about this file: " }, function(input)
+            if input and input ~= "" then
+              require("CopilotChat").ask(input, {
+                selection = require("CopilotChat.select").buffer,
+              })
+            end
+          end)
+        end,
+        desc = "Ask about current file (CopilotChat)",
+        mode = "n",
+      },
+      {
+        "<leader>ac",
+        function()
+          local file = vim.fn.expand("%:p")
+          local fname = vim.fn.expand("%:t")
+          vim.ui.input({ prompt = "Ask Claude about " .. fname .. ": " }, function(input)
+            if input and input ~= "" then
+              local prompt = string.format("以下是文件 %s 的内容:\n\n$(cat %s)\n\n%s", fname, vim.fn.shellescape(file), input)
+              local cmd = string.format("echo %s | claude -p", vim.fn.shellescape(prompt))
+              require("toggleterm.terminal").Terminal
+                :new({
+                  cmd = cmd,
+                  hidden = true,
+                  direction = "float",
+                  close_on_exit = false,
+                  float_opts = { border = "curved", width = 120, height = 35, title = " Claude " },
+                  on_open = function(term)
+                    vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<A-q>", "<cmd>close<CR>", { noremap = true, silent = true })
+                    vim.api.nvim_buf_set_keymap(term.bufnr, "t", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+                  end,
+                })
+                :open()
+            end
+          end)
+        end,
+        desc = "Ask Claude about current file",
+        mode = "n",
+      },
+      {
+        "<leader>ao",
+        function()
+          local file = vim.fn.expand("%:p")
+          local fname = vim.fn.expand("%:t")
+          vim.ui.input({ prompt = "Ask OpenCode about " .. fname .. ": " }, function(input)
+            if input and input ~= "" then
+              local prompt = string.format("以下是文件 %s 的内容:\n\n$(cat %s)\n\n%s", fname, vim.fn.shellescape(file), input)
+              local cmd = string.format("echo %s | opencode run", vim.fn.shellescape(prompt))
+              require("toggleterm.terminal").Terminal
+                :new({
+                  cmd = cmd,
+                  hidden = true,
+                  direction = "float",
+                  close_on_exit = false,
+                  float_opts = { border = "curved", width = 120, height = 35, title = " OpenCode " },
+                  on_open = function(term)
+                    vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<A-q>", "<cmd>close<CR>", { noremap = true, silent = true })
+                    vim.api.nvim_buf_set_keymap(term.bufnr, "t", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+                  end,
+                })
+                :open()
+            end
+          end)
+        end,
+        desc = "Ask OpenCode about current file",
+        mode = "n",
+      },
+      {
+        "<leader>ag",
+        function()
+          local file = vim.fn.expand("%:p")
+          local fname = vim.fn.expand("%:t")
+          vim.ui.input({ prompt = "Ask Gemini about " .. fname .. ": " }, function(input)
+            if input and input ~= "" then
+              local prompt = string.format("以下是文件 %s 的内容:\n\n$(cat %s)\n\n%s", fname, vim.fn.shellescape(file), input)
+              local cmd = string.format("echo %s | gemini -p", vim.fn.shellescape(prompt))
+              require("toggleterm.terminal").Terminal
+                :new({
+                  cmd = cmd,
+                  hidden = true,
+                  direction = "float",
+                  close_on_exit = false,
+                  float_opts = { border = "curved", width = 120, height = 35, title = " Gemini " },
+                  on_open = function(term)
+                    vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<A-q>", "<cmd>close<CR>", { noremap = true, silent = true })
+                    vim.api.nvim_buf_set_keymap(term.bufnr, "t", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+                  end,
+                })
+                :open()
+            end
+          end)
+        end,
+        desc = "Ask Gemini about current file",
+        mode = "n",
+      },
     },
     config = function(_, opts)
       local chat = require("CopilotChat")

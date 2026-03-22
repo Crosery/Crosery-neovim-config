@@ -154,3 +154,6 @@ lazy-lock.json
 lua/custom/**
 lua/custom.lua
 .nvimlog
+
+logs/
+notes/

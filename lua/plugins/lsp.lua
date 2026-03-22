@@ -131,6 +131,8 @@ return {
           },
         },
 
+        vtsls = {},
+        vue_ls = {},
         marksman = { enabled = false },
       },
       ---@type table<string, fun(server:string, opts: vim.lsp.Config):boolean?>

@@ -148,6 +148,9 @@ return {
         },
       },
       grep = {
+        rg_glob = true,        -- 允许在搜索框用 -- 分隔 glob 过滤
+        glob_flag = "--iglob",  -- 大小写不敏感的 glob
+        glob_separator = "%s%-%-",  -- 分隔符: " --"
         actions = {
           ["alt-i"] = { actions.toggle_ignore },
           ["alt-h"] = { actions.toggle_hidden },
@@ -228,12 +231,24 @@ return {
     { "<leader>s/", "<cmd>FzfLua search_history<cr>", desc = "Search History" },
     { "<leader>sa", "<cmd>FzfLua autocmds<cr>", desc = "Auto Commands" },
     { "<leader>sb", "<cmd>FzfLua lines<cr>", desc = "Buffer Lines" },
+    { "<leader>sB", function() require("fzf-lua").blines({ query = vim.fn.expand("<cword>") }) end, desc = "Current Word (Buffer)" },
     { "<leader>sc", "<cmd>FzfLua command_history<cr>", desc = "Command History" },
     { "<leader>sC", "<cmd>FzfLua commands<cr>", desc = "Commands" },
     { "<leader>sd", "<cmd>FzfLua diagnostics_workspace<cr>", desc = "Diagnostics" },
     { "<leader>sD", "<cmd>FzfLua diagnostics_document<cr>", desc = "Buffer Diagnostics" },
     { "<leader>sg", LazyVim.pick("live_grep"), desc = "Grep (Root Dir)" },
     { "<leader>sG", LazyVim.pick("live_grep", { root = false }), desc = "Grep (cwd)" },
+    {
+      "<leader>st",
+      function()
+        vim.ui.input({ prompt = "Filetype: " }, function(ft)
+          if ft and ft ~= "" then
+            require("fzf-lua").live_grep({ rg_opts = "--column --line-number --no-heading --color=always --smart-case -t " .. ft })
+          end
+        end)
+      end,
+      desc = "Grep by Filetype",
+    },
     { "<leader>sh", "<cmd>FzfLua help_tags<cr>", desc = "Help Pages" },
     { "<leader>sH", "<cmd>FzfLua highlights<cr>", desc = "Search Highlight Groups" },
     { "<leader>sj", "<cmd>FzfLua jumps<cr>", desc = "Jumplist" },
