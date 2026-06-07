@@ -14,7 +14,6 @@ LazyVim + lazy.nvim。**代码阅读器**，配合外部 Claude Code 工作：nv
 |---|---|---|
 | `lua/config/` | lazy 引导 / options / keymaps / autocmds | `lua/config/AGENT.md` |
 | `lua/plugins/` | 自定义/覆盖的插件 spec | `lua/plugins/AGENT.md` |
-| `lua/acp/` | 自研 ACP agent 包（17 文件） | `lua/acp/AGENT.md` |
 | `lua/util/` | 共享工具（os/preview） | `lua/util/AGENT.md` |
 | `lua/assets/` | 非插件数据（alpha 头图） | `lua/assets/AGENT.md` |
 | `after/lsp/` | 单语言 LSP 覆盖 | `after/AGENT.md` |

@@ -2,7 +2,7 @@
 
 lazy.nvim 自动导入本目录下所有 `.lua` 文件并合并到 spec tree。每个文件 `return` 一个 spec 或 spec 列表，可覆盖 LazyVim 默认插件（用相同插件名）。
 
-## 当前清单（21 个）
+## 当前清单（19 个）
 
 | 文件 | 作用 |
 |---|---|
@@ -25,8 +25,7 @@ lazy.nvim 自动导入本目录下所有 `.lua` 文件并合并到 spec tree。�
 | `toggleterm.lua` | 浮动 / 底部终端 + 切换；`<C-t>` / `<C-/>` |
 | `dap.lua` | DAP 调试 UI 与 keymaps |
 | `rust.lua` | rustaceanvim + codelldb DAP adapter |
-| `completion.lua` | blink.cmp 键位 + 屏蔽 ACP input buffer 自动补全 |
-| `acp.lua` | 加载 `lua/acp/` 包，绑定 `<A-u>` / `<A-i>` |
+| `completion.lua` | blink.cmp 键位 |
 
 ## 增删规则
 
@@ -44,4 +43,3 @@ lazy.nvim 自动导入本目录下所有 `.lua` 文件并合并到 spec tree。�
 
 - `which-key.lua` 的 leader 分组在 `<leader>a-z` 中声明。新插件用 leader 键时先看那里有没有占用，避免覆盖。
 - 终端键位在 `toggleterm.lua` 内集中绑定（`<C-t>` / `<C-/>` / `<A-q/r/n/a/d/1-9>`）。
-- ACP 键位在 `acp.lua`（`<A-u>` / `<A-i>`），不走 leader。

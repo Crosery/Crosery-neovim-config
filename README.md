@@ -9,7 +9,6 @@ Crosery 的私人 Neovim 配置，基于 [LazyVim](https://www.lazyvim.org/) + [
 - `init.lua` → `lua/config/lazy.lua` 引导 lazy.nvim
 - `lua/config/` — options / keymaps / autocmds / lazy bootstrap
 - `lua/plugins/` — 自定义/覆盖的插件 spec
-- `lua/acp/` — 自研 ACP agent 包
 - `lua/util/` — 共享工具
 - `lua/assets/header_img/` — alpha 启动页头图
 - `after/lsp/` — 单语言 LSP 覆盖（vtsls 等）
