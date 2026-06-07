@@ -110,10 +110,6 @@ return {
       mode = { "n", "t", "i" },
       desc = "Toggle horizontal terminal",
     },
-    { "<leader>o1", desc = "Toggle OpenCode" },
-    { "<leader>o2", desc = "Toggle Codex" },
-    { "<leader>o3", desc = "Toggle ClaudeCode" },
-    { "<leader>o4", desc = "Toggle Gemini" },
   },
   config = function()
     local Terminal = require("toggleterm.terminal").Terminal
@@ -294,60 +290,5 @@ return {
       end, { desc = "Jump to terminal #" .. i })
     end
 
-    ---------------------------------------------------------------------------
-    -- 工具终端
-    ---------------------------------------------------------------------------
-    local last_cwds = {}
-    local tool_id_counter = 0
-
-    local function create_tool_terminal(name, cmd)
-      local term_instance = nil
-      tool_id_counter = tool_id_counter + 1
-      local my_id = TOOL_ID_MIN + tool_id_counter
-
-      local function create_new_term()
-        return Terminal:new({
-          id = my_id,
-          cmd = cmd,
-          hidden = true,
-          direction = "float",
-          float_opts = {
-            border = "curved",
-            width = 120,
-            height = 35,
-            title_pos = "center",
-            title = " " .. name .. " ",
-          },
-          on_open = function(term)
-            vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<Esc>", "<Esc>", { noremap = true, silent = true })
-            vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<A-q>", "<cmd>close<CR>", { noremap = true, silent = true })
-          end,
-        })
-      end
-
-      return function()
-        local cwd = vim.fn.getcwd()
-        if not term_instance then
-          term_instance = create_new_term()
-          term_instance.dir = cwd
-          term_instance:open()
-          last_cwds[name] = cwd
-        elseif last_cwds[name] and last_cwds[name] ~= cwd then
-          term_instance:shutdown()
-          my_id = next_free_id(TOOL_ID_MIN)
-          term_instance = create_new_term()
-          term_instance.dir = cwd
-          term_instance:open()
-          last_cwds[name] = cwd
-        else
-          term_instance:toggle()
-        end
-      end
-    end
-
-    vim.keymap.set("n", "<leader>o1", create_tool_terminal("OpenCode", "opencode"), { desc = "Toggle OpenCode" })
-    vim.keymap.set("n", "<leader>o2", create_tool_terminal("Codex", "codex"), { desc = "Toggle Codex" })
-    vim.keymap.set("n", "<leader>o3", create_tool_terminal("ClaudeCode", "claude"), { desc = "Toggle ClaudeCode" })
-    vim.keymap.set("n", "<leader>o4", create_tool_terminal("Gemini", "gemini"), { desc = "Toggle Gemini" })
   end,
 }

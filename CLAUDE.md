@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-LazyVim-based Neovim configuration. Uses `lazy.nvim` as plugin manager with LazyVim as the base framework.
+LazyVim-based Neovim configuration. Uses `lazy.nvim` as plugin manager with LazyVim as the base framework. Positioned as a **code reader** that pairs with Claude Code in an external window: nvim left, Claude Code right.
 
 ## Architecture
 
@@ -18,13 +18,15 @@ LazyVim-based Neovim configuration. Uses `lazy.nvim` as plugin manager with Lazy
 
 **Plugins** (`lua/plugins/`): Each `.lua` file is auto-loaded by lazy.nvim and returns plugin spec(s). These override/extend LazyVim defaults.
 
+**ACP package** (`lua/acp/`): Self-authored agent-communication-protocol package. Surfaced via `lua/plugins/acp.lua` (`<A-u>` toggle / `<A-i>` list). Reserved for future plugin work.
+
 **LSP overrides** (`after/lsp/`): Per-language LSP configs (vtsls).
 
-**Utilities** (`lua/util/`): Shared helpers (e.g. `os.lua` for cross-platform file opening).
+**Utilities** (`lua/util/`): Shared helpers (`os.lua` for cross-platform open, `preview.lua` for the preview toggle).
 
-**Assets** (`lua/assets/`): Non-plugin data (e.g. `header_img/` for alpha dashboard headers).
+**Assets** (`lua/assets/`): Non-plugin data (`header_img/` for alpha dashboard headers).
 
-**LazyVim extras** (via `lazyvim.json`): copilot, copilot-chat, dap.core, clangd, cmake, json, markdown, python, rust, toml, alpha, gitui.
+**LazyVim extras** (via `lazyvim.json`): dap.core, clangd, json, markdown, python, rust, toml, alpha, neo-tree.
 
 ## Key Design Decisions
 
@@ -49,4 +51,5 @@ LazyVim-based Neovim configuration. Uses `lazy.nvim` as plugin manager with Lazy
 - To override a LazyVim default plugin, create a spec with the same plugin name in `lua/plugins/`
 - Language-specific LSP configs go in `after/lsp/`
 - `lazy-lock.json` is the lockfile for reproducible plugin versions — commit changes to it
-- Target languages: C/C++, Python, Rust, TypeScript, Flutter/Dart, C#
+- Target languages: C/C++, Python, Rust, TypeScript (Flutter/C#/CMake removed in the reader-mode refactor — re-add via `lazyvim.json` extras + `lua/plugins/<lang>.lua` if needed)
+- AI integration: external Claude Code only. Copilot/CopilotChat and the in-nvim AI CLI floating terminals (OpenCode/Codex/Claude/Gemini) were removed; do not re-add them without confirmation.

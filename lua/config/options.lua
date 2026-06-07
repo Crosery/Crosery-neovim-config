@@ -154,6 +154,3 @@ vim.g.loaded_perl_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_python3_provider = 0
 
--- 默认关闭 AI 补全 (Copilot)
--- 可以使用 :Copilot enable 手动开启
-vim.g.copilot_enabled = false
