@@ -22,7 +22,7 @@ return {
 
     local function load_random_header()
       math.randomseed(os.time())
-      local header_folder = "/home/crosery/.config/nvim/lua/plugins/header_img/"
+      local header_folder = vim.fn.stdpath("config") .. "/lua/assets/header_img/"
       local files = get_all_files_in_dir(header_folder)
 
       if #files == 0 then
@@ -32,7 +32,7 @@ return {
       local random_file = files[math.random(#files)]
       -- vim.notify(random_file)
       local relative_path = random_file:sub(#header_folder + 1)
-      local module_name = "plugins.header_img." .. relative_path:gsub("/", "."):gsub("\\", "."):gsub("%.lua$", "")
+      local module_name = "assets.header_img." .. relative_path:gsub("/", "."):gsub("\\", "."):gsub("%.lua$", "")
 
       package.loaded[module_name] = nil
 

@@ -88,7 +88,7 @@ require("lazy").setup({
         "gzip", -- 用于直接读写 .gz 文件
         -- "matchit",  -- 扩展了 '%' 的匹配功能，LazyVim 有更好的替代品
         -- "matchparen", -- 用于高亮匹配的括号，LazyVim 有更好的替代品
-        -- "netrwPlugin",-- Vim 内置的文件浏览器，通常会被 nvim-tree 等插件替代
+        "netrwPlugin", -- 由 snacks.explorer 接管
         "tarPlugin", -- 用于浏览 tar 文件
         "tohtml", -- 将代码转换为 HTML
         "tutor", -- Vim 教程

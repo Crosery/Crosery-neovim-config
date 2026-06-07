@@ -1,4 +1,8 @@
 local map = LazyVim.safe_keymap_set
+local os_util = require("util.os")
+local preview = require("util.preview")
+
+map("n", "<leader>pv", preview.toggle, { desc = "Toggle preview mode" })
 
 -- 防止空格键超时显示 <20>
 map("n", "<Space>", "<Nop>", { silent = true })
@@ -113,7 +117,7 @@ map("n", "gx", function()
     mp3 = true, flac = true, wav = true, ogg = true,
   }
   if external_types[ext] then
-    vim.fn.jobstart({ "xdg-open", vim.fn.expand("%:p") }, { detach = true })
+    os_util.open(vim.fn.expand("%:p"))
     vim.notify("外部打开: " .. vim.fn.expand("%:t"), vim.log.levels.INFO)
     return
   end
@@ -172,20 +176,7 @@ map("n", "gx", function()
     return
   end
 
-  -- 用 Chrome 打开 URL
-  vim.fn.jobstart({ "google-chrome-stable", url }, { detach = true })
-
-  -- 延迟后用 niri 聚焦 Chrome 窗口（同步执行，niri msg 很快）
-  vim.defer_fn(function()
-    local win_id = vim.fn.system(
-      [[niri msg windows 2>/dev/null | awk '/^Window ID/ { gsub(/:$/,"",$3); id=$3 } /App ID: "google-chrome"/ { print id }' | tail -1]]
-    )
-    win_id = vim.trim(win_id)
-    if win_id ~= "" then
-      vim.fn.system("niri msg action focus-window --id " .. win_id)
-    end
-  end, 500)
-
+  os_util.open(url)
   vim.notify("打开: " .. url, vim.log.levels.INFO)
 end, { desc = "打开链接并跳转浏览器 (Open URL)" })
 

@@ -1,45 +1,34 @@
 return {
   "3rd/image.nvim",
-  dependencies = {
-    {
-      "leafo/magick",
-      lazy = true,
-      build = "luarocks install --server=https://luarocks.org/dev magick",
-    },
-  },
+  cond = function() return vim.fn.exists("g:neovide") == 0 and vim.env.TERM ~= nil end,
   opts = {
     backend = "kitty",
-    processor = "magick_rock",
+    processor = "magick_cli",
     integrations = {
-      -- 必须改成表结构
       markdown = {
         enabled = true,
         clear_in_insert_mode = false,
         download_remote_images = true,
-        only_render_image_at_cursor = false,
-        filetypes = { "markdown", "vimwiki" }, -- 可以在这里指定关联的文件类型
+        only_render_image_at_cursor = true,
+        filetypes = { "markdown", "vimwiki" },
       },
       neorg = {
         enabled = true,
         clear_in_insert_mode = false,
         download_remote_images = true,
-        only_render_image_at_cursor = false,
+        only_render_image_at_cursor = true,
         filetypes = { "norg" },
       },
-      html = {
-        enabled = true,
-      },
-      css = {
-        enabled = true,
-      },
+      html = { enabled = true },
+      css = { enabled = true },
     },
-    max_width = 100,
-    max_height = 12,
-    max_width_window_percentage = math.huge,
-    max_height_window_percentage = math.huge,
+    max_width = nil,
+    max_height = nil,
+    max_width_window_percentage = 80,
+    max_height_window_percentage = 60,
     window_overlap_clear_enabled = true,
     editor_only_render_when_focused = false,
     tmux_show_only_in_active_window = true,
-    hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" },
+    hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif", "*.svg" },
   },
 }

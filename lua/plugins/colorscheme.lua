@@ -1,35 +1,94 @@
-return {
-  -- gruvbox 主题
-  { "ellisonleao/gruvbox.nvim" },
+-- 切换主题: "gruvbox" | "dankcolors"
+local theme = "gruvbox"
 
-  -- 配置 LazyVim 使用 gruvbox 主题
+local function apply_dankcolors()
+  require("base16-colorscheme").setup({
+    base00 = "#19120c",
+    base01 = "#19120c",
+    base02 = "#a59e98",
+    base03 = "#a59e98",
+    base04 = "#fff6ef",
+    base05 = "#fffbf8",
+    base06 = "#fffbf8",
+    base07 = "#fffbf8",
+    base08 = "#ffa29c",
+    base09 = "#ffa29c",
+    base0A = "#ffc18f",
+    base0B = "#b3ffa3",
+    base0C = "#ffdec4",
+    base0D = "#ffc18f",
+    base0E = "#ffcca3",
+    base0F = "#ffcca3",
+  })
+
+  vim.api.nvim_set_hl(0, "Visual", { bg = "#a59e98", fg = "#fffbf8", bold = true })
+  vim.api.nvim_set_hl(0, "Statusline", { bg = "#ffc18f", fg = "#19120c" })
+  vim.api.nvim_set_hl(0, "LineNr", { fg = "#a59e98" })
+  vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ffdec4", bold = true })
+  vim.api.nvim_set_hl(0, "Statement", { fg = "#ffcca3", bold = true })
+  vim.api.nvim_set_hl(0, "Keyword", { link = "Statement" })
+  vim.api.nvim_set_hl(0, "Repeat", { link = "Statement" })
+  vim.api.nvim_set_hl(0, "Conditional", { link = "Statement" })
+  vim.api.nvim_set_hl(0, "Function", { fg = "#ffc18f", bold = true })
+  vim.api.nvim_set_hl(0, "Macro", { fg = "#ffc18f", italic = true })
+  vim.api.nvim_set_hl(0, "@function.macro", { link = "Macro" })
+  vim.api.nvim_set_hl(0, "Type", { fg = "#ffdec4", bold = true, italic = true })
+  vim.api.nvim_set_hl(0, "Structure", { link = "Type" })
+  vim.api.nvim_set_hl(0, "String", { fg = "#b3ffa3", italic = true })
+  vim.api.nvim_set_hl(0, "Operator", { fg = "#fff6ef" })
+  vim.api.nvim_set_hl(0, "Delimiter", { fg = "#fff6ef" })
+  vim.api.nvim_set_hl(0, "@punctuation.bracket", { link = "Delimiter" })
+  vim.api.nvim_set_hl(0, "@punctuation.delimiter", { link = "Delimiter" })
+  vim.api.nvim_set_hl(0, "Comment", { fg = "#a59e98", italic = true })
+end
+
+return {
+  { "ellisonleao/gruvbox.nvim", enabled = theme == "gruvbox" },
+
+  {
+    "RRethy/base16-nvim",
+    enabled = theme == "dankcolors",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      apply_dankcolors()
+
+      if not _G._dankcolors_watcher then
+        local uv = vim.uv or vim.loop
+        local path = vim.fn.stdpath("config") .. "/lua/plugins/colorscheme.lua"
+        _G._dankcolors_watcher = uv.new_fs_event()
+        _G._dankcolors_watcher:start(path, {}, vim.schedule_wrap(function()
+          local ok, specs = pcall(dofile, path)
+          if ok and type(specs) == "table" then
+            for _, s in ipairs(specs) do
+              if type(s) == "table" and s[1] == "RRethy/base16-nvim" and s.config then
+                s.config()
+                print("Theme reload")
+                break
+              end
+            end
+          end
+        end))
+      end
+    end,
+  },
+
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "gruvbox",
+      colorscheme = theme == "gruvbox" and "gruvbox" or function() end,
     },
   },
 
-  -- 添加 transparent.nvim 插件，并配置为仅在非 Neovide 环境下启用
   {
     "xiyaowong/transparent.nvim",
-    -- 关键：只有在 vim.g.neovide 不存在时，才启用此插件
     enabled = not vim.g.neovide,
-    -- 避免延迟加载，确保启动时能正确清除背景高亮
     lazy = false,
     config = function()
       require("transparent").setup({
-        -- 你可以保留默认的 groups，或者自定义
-        extra_groups = {
-          -- 添加这些可以让 Lazy.nvim, Mason 等浮动窗口也变透明
-          "NormalFloat",
-          -- 如果你使用 nvim-tree
-          "NvimTreeNormal",
-        },
+        extra_groups = { "NormalFloat", "NvimTreeNormal" },
         exclude_groups = {},
       })
-
-      -- 在插件加载后，自动执行 :TransparentEnable 命令来开启透明效果
       vim.cmd("TransparentEnable")
     end,
   },

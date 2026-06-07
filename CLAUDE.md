@@ -18,14 +18,18 @@ LazyVim-based Neovim configuration. Uses `lazy.nvim` as plugin manager with Lazy
 
 **Plugins** (`lua/plugins/`): Each `.lua` file is auto-loaded by lazy.nvim and returns plugin spec(s). These override/extend LazyVim defaults.
 
-**LSP overrides** (`after/lsp/`): Per-language LSP configs (vtsls, vue_ls).
+**LSP overrides** (`after/lsp/`): Per-language LSP configs (vtsls).
+
+**Utilities** (`lua/util/`): Shared helpers (e.g. `os.lua` for cross-platform file opening).
+
+**Assets** (`lua/assets/`): Non-plugin data (e.g. `header_img/` for alpha dashboard headers).
 
 **LazyVim extras** (via `lazyvim.json`): copilot, copilot-chat, dap.core, clangd, cmake, json, markdown, python, rust, toml, alpha, gitui.
 
 ## Key Design Decisions
 
 - **Transparency**: Autocmds zero out backgrounds for Normal, TabLine, BufferLine, etc. Custom orange separator color.
-- **Custom theme**: `dankcolors.lua` uses base16-nvim with hot-reloading support.
+- **Theme switching**: `colorscheme.lua` top-level `theme` variable controls gruvbox vs dankcolors (base16-nvim with hot-reload).
 - **Picker**: FZF-lua (not Telescope) as primary picker.
 - **Completion**: blink.cmp (not nvim-cmp).
 - **Neovide support**: Font, cursor effects, and transparency configured in `options.lua`.

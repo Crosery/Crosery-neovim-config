@@ -135,7 +135,7 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.spell = false
 
     -- 关闭 Markdown 的所有诊断提示（包含 LSP / linter 产生的 diagnostics）
-    vim.diagnostic.disable(event.buf)
+    vim.diagnostic.enable(false, { bufnr = event.buf })
     if vim.lsp.inlay_hint then
       vim.lsp.inlay_hint.enable(false, { bufnr = event.buf })
     end

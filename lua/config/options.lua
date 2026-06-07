@@ -10,7 +10,7 @@ if vim.g.neovide then
 end
 
 -- neovim配置
-vim.lsp.set_log_level("off")
+vim.lsp.log.set_level("off")
 
 -- 自动保存
 vim.g.auto_save = 1
@@ -132,7 +132,7 @@ opt.splitright = true -- 创建新的垂直分割窗口时，新窗口出现在�
 opt.statuscolumn = [[%!v:lua.LazyVim.statuscolumn()]] -- 使用 LazyVim 的 Lua 函数来自定义状态列（行号左侧区域）。
 opt.tabstop = 2 -- 一个 Tab 字符代表的空格数。
 opt.termguicolors = true -- 启用 24 位真彩色支持，让颜色主题显示更精确。
-opt.timeoutlen = vim.g.vscode and 1000 or 99999 -- 不超时，等待手动按下一个键
+opt.timeoutlen = vim.g.vscode and 1000 or 300 -- 300ms 触发 which-key 弹窗；弹窗弹出后不再受 timeout 限制，可慢慢按下个键
 opt.undofile = true -- 启用撤销历史文件，这样关闭 Neovim 后再打开，仍然可以撤销之前的修改。
 opt.undolevels = 10000 -- 最大的撤销次数。
 opt.updatetime = 200 -- 更新时间间隔（毫秒）。用于触发 `CursorHold` 事件和写入交换文件。
@@ -148,6 +148,11 @@ opt.wrap = false -- 默认禁用自动换行（软换行）。
 -- 修复 Markdown 文件的缩进设置。
 -- 这是针对某个 Markdown 插件的特定选项，用于禁用其推荐的样式。
 vim.g.markdown_recommended_style = 0
+
+-- 禁用不使用的 providers
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_python3_provider = 0
 
 -- 默认关闭 AI 补全 (Copilot)
 -- 可以使用 :Copilot enable 手动开启

@@ -72,7 +72,20 @@ return {
       },
       sections = {
         lualine_a = { "mode" },
-        lualine_b = { "branch" },
+        lualine_b = {
+          {
+            -- 当前工作目录（home 替换为 ~）
+            function()
+              return " " .. vim.fn.fnamemodify(vim.fn.getcwd(), ":~")
+            end,
+            color = { fg = colors.yellow, gui = "bold" },
+          },
+          {
+            "branch",
+            icon = "",
+            color = { fg = colors.green, gui = "bold" },
+          },
+        },
 
         lualine_c = {
           LazyVim.lualine.root_dir(),
