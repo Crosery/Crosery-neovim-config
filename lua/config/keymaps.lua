@@ -73,11 +73,12 @@ map("n", "<leader>wq", "<cmd>wq<cr>", { desc = "保存并退出" })
 -- 禁掉 LazyVim 的 <leader>ft / <leader>fT 终端 (改用 toggleterm)
 vim.keymap.set("n", "<leader>ft", "<Nop>", { desc = "disabled" })
 vim.keymap.set("n", "<leader>fT", "<Nop>", { desc = "disabled" })
--- 终端 <A-Esc> 退出到 normal mode（为复制等场景）。
--- esc 不再截获 → 透传给底层程序（claude code 取消、lazygit 等正常工作），副作用是 lazygit 那条特例不再需要
+-- 终端 <C-]> 退出到 normal mode（为复制等场景）。
+-- 选 <C-]> 是因为：alt+esc 在多数 terminal emulator 下 alt 被当 meta 发 esc 序列，按键不可靠；
+-- esc 本身要保留给底层程序（claude code 取消、lazygit 等）；<C-]> 单手两键，t mode 下不冲突
 vim.api.nvim_create_autocmd("TermOpen", {
   callback = function(args)
-    vim.keymap.set("t", "<A-Esc>", "<C-\\><C-n>", { buffer = args.buf, desc = "退出终端模式（去复制）" })
+    vim.keymap.set("t", "<C-]>", "<C-\\><C-n>", { buffer = args.buf, desc = "退出终端模式（去复制）" })
   end,
 })
 
