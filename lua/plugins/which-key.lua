@@ -4,6 +4,7 @@ return {
   opts_extend = { "spec" },
   opts = {
     preset = "helix",
+    delay = 0, -- 按 leader 立即出弹窗，去掉默认 200ms 隐身期（避免 "前面可以后面不可以" 的竞争）
     defaults = {},
     spec = {
       {

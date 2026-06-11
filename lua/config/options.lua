@@ -132,7 +132,7 @@ opt.splitright = true -- 创建新的垂直分割窗口时，新窗口出现在�
 opt.statuscolumn = [[%!v:lua.LazyVim.statuscolumn()]] -- 使用 LazyVim 的 Lua 函数来自定义状态列（行号左侧区域）。
 opt.tabstop = 2 -- 一个 Tab 字符代表的空格数。
 opt.termguicolors = true -- 启用 24 位真彩色支持，让颜色主题显示更精确。
-opt.timeoutlen = vim.g.vscode and 1000 or 300 -- 300ms 触发 which-key 弹窗；弹窗弹出后不再受 timeout 限制，可慢慢按下个键
+opt.timeoutlen = vim.g.vscode and 1000 or 1000 -- which-key delay=0 立即出弹窗；timeoutlen 给得长，让弹窗内 prefix+keymap 节点（如 <leader>g）按子键时不被判 timedout 而 execute
 opt.undofile = true -- 启用撤销历史文件，这样关闭 Neovim 后再打开，仍然可以撤销之前的修改。
 opt.undolevels = 10000 -- 最大的撤销次数。
 opt.updatetime = 200 -- 更新时间间隔（毫秒）。用于触发 `CursorHold` 事件和写入交换文件。

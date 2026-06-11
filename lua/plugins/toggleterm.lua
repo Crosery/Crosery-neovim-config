@@ -110,6 +110,40 @@ return {
       mode = { "n", "t", "i" },
       desc = "Toggle horizontal terminal",
     },
+    -- <A-w>: 焦点在终端 → 跳回上一个窗口；否则跳到可见的侧边终端（horizontal 优先，没有就 float）
+    -- 终端 buftype 检测用 buf option，不依赖 toggleterm 状态，所以系统/lazygit 终端也能切
+    {
+      "<A-w>",
+      function()
+        if vim.bo.buftype == "terminal" then
+          vim.cmd("stopinsert")
+          vim.cmd("wincmd p")
+          return
+        end
+        local horiz, float
+        for _, win in ipairs(vim.api.nvim_list_wins()) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.bo[buf].buftype == "terminal" then
+            local cfg = vim.api.nvim_win_get_config(win)
+            if not cfg.relative or cfg.relative == "" then
+              horiz = win
+              break
+            else
+              float = win
+            end
+          end
+        end
+        local target = horiz or float
+        if target then
+          vim.api.nvim_set_current_win(target)
+          vim.cmd("startinsert")
+        else
+          vim.notify("没有可见的终端窗口（先用 <C-t> 或 <C-/> 打开）", vim.log.levels.WARN)
+        end
+      end,
+      mode = { "n", "t", "i" },
+      desc = "切换到侧边终端 / 从终端返回 (Alt+w)",
+    },
   },
   config = function()
     local Terminal = require("toggleterm.terminal").Terminal
