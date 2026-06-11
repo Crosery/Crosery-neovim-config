@@ -321,7 +321,6 @@ return {
           require("toggleterm.terminal").get(target_id):open()
           last_horiz = target_id
         end
-  
       end, { desc = "Jump to terminal #" .. i })
     end
 
