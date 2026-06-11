@@ -8,7 +8,7 @@
 |---|---|
 | `lazy.lua` | lazy.nvim bootstrap + 插件 spec 收集 + 禁用内置插件 |
 | `options.lua` | `vim.g.*` / `vim.opt.*` 全局；neovide 专属配置头部 2-10 行 |
-| `keymaps.lua` | 自定义键位 + 终端 Esc 退出 autocmd + URL/checkbox/gx 行为 |
+| `keymaps.lua` | 自定义键位 + 终端 Esc 退出 autocmd + URL/checkbox/gx 行为 + `<leader>oo`/`<leader>oO` 万能 open |
 | `autocmds.lua` | 文件变动重载 / yank 高亮 / 透明背景 / `q` 关窗 / 拼写规则 |
 
 ## 关键约定
