@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 -- 记录最后活跃的终端 ID
 local last_float = 1
 local last_horiz = 11

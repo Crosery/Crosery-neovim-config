@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 local map = LazyVim.safe_keymap_set
 local os_util = require("util.os")
 local preview = require("util.preview")
