@@ -73,27 +73,15 @@ map("n", "<leader>wq", "<cmd>wq<cr>", { desc = "保存并退出" })
 -- 禁掉 LazyVim 的 <leader>ft / <leader>fT 终端 (改用 toggleterm)
 vim.keymap.set("n", "<leader>ft", "<Nop>", { desc = "disabled" })
 vim.keymap.set("n", "<leader>fT", "<Nop>", { desc = "disabled" })
--- 终端 <C-]> 退出到 normal mode（备用，万一想走 vim 选区路径）。esc 保留给底层程序
+-- 终端键位 + 复制流程：
+-- · <C-]> 退出 t mode（备用，部分 terminal emulator 会吞掉这个键序列，没反应是正常的）
+-- · <LeftMouse> 在 t mode 下被劫持 → 自动 <C-\><C-n> 出 t mode 进 normal mode，再重放 LeftMouse
+--   实现"鼠标碰终端就进 normal mode" 的效果：键盘 <A-w> 进终端是 t mode（输入），鼠标点击是 normal mode（选区）
+-- · clipboard=unnamedplus 已配，normal mode 下 v/V 选区直接 y 进系统剪贴板
 vim.api.nvim_create_autocmd("TermOpen", {
   callback = function(args)
-    vim.keymap.set("t", "<C-]>", "<C-\\><C-n>", { buffer = args.buf, desc = "退出终端模式（备用）" })
-  end,
-})
-
--- 终端复制流程：进入 terminal buffer 自动让出鼠标给 terminal emulator，鼠标拖选 + cmd+c 直接走系统剪贴板；
--- 离开终端 buffer 恢复 nvim mouse=a。mouse 是全局选项，所以只能用 BufEnter/BufLeave 切换
-vim.api.nvim_create_autocmd("BufEnter", {
-  callback = function()
-    if vim.bo.buftype == "terminal" then
-      vim.o.mouse = ""
-    end
-  end,
-})
-vim.api.nvim_create_autocmd("BufLeave", {
-  callback = function()
-    if vim.bo.buftype == "terminal" then
-      vim.o.mouse = "a"
-    end
+    vim.keymap.set("t", "<C-]>", [[<C-\><C-n>]], { buffer = args.buf, desc = "退出终端模式（备用）" })
+    vim.keymap.set("t", "<LeftMouse>", [[<C-\><C-n><LeftMouse>]], { buffer = args.buf, desc = "鼠标点击 → normal mode（准备选区）" })
   end,
 })
 
